@@ -10,10 +10,11 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 
-Plugin 'valloric/YouCompleteMe', {'do': './install.py --clangd-completer'}
+Plugin 'valloric/YouCompleteMe'
 Plugin 'rdnetto/YCM-Generator', {'branch': 'stable'}
 
 call vundle#end()
 filetype plugin indent on
 
 set encoding=utf-8
+set number
