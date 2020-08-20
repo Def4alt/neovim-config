@@ -7,8 +7,12 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'jremmen/vim-ripgrep'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'joshdick/onedark.vim'
+Plug 'tomasiser/vim-code-dark'
 Plug 'neovimhaskell/haskell-vim'
+Plug 'vim-airline/vim-airline'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-surround'
 
 call plug#end()
 
@@ -50,8 +54,12 @@ inoremap <silent><expr> <Tab>
         \ <SID>check_back_space() ? "\<Tab>" :
         \ coc#refresh()
 
-colorscheme onedark
+map <C-o> :NERDTreeToggle<CR>
+
+colorscheme codedark 
 syntax on
+
+let g:airline_theme = 'codedark'
 
 set encoding=utf-8
 set number
