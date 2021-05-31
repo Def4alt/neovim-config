@@ -1,66 +1,78 @@
-set nocompatible
-filetype off
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+set smartindent
 
-call plug#begin(stdpath('data') . '/plugged')
-
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'jremmen/vim-ripgrep'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'tomasiser/vim-code-dark'
-Plug 'neovimhaskell/haskell-vim'
-Plug 'vim-airline/vim-airline'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'scrooloose/nerdtree'
-Plug 'tpope/vim-surround'
-
-call plug#end()
-
-set hidden
-
+set number
+set noswapfile
 set nobackup
-set nowritebackup
-
+set termguicolors
+set scrolloff=4
+set title
+set mouse=a
+set bg=dark
+set encoding=utf-8
+set updatetime=300
 set cmdheight=2
 
-set updatetime=300
+set clipboard=unnamedplus
 
-set shortmess+=c
-
-let g:onedark_termcolors = 256 
-
-if has("patch-8.1.1564")
-	set signcolumn=number
-else
-	set signcolumn=yes
+if has('syntax')
+	syntax on
 endif
 
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+filetype plugin on
 
-nnoremap <silent> <C-f> :Files<CR>
+let $VIM_AUTOLOAD = stdpath('config') . '/autoload/'
+let $VIM_PLUG = $VIM_AUTOLOAD . 'plug.vim'
 
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy :call CocActionAsync('doHover')<CR> 
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+if ! filereadable(system('echo -n $VIM_PLUG'))
+	echo "Downloading junegunn/vim-plug to manage plugins..."
+	silent !mkdir -p $VIM_AUTOLOAD 
+	silent !curl "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" > $VIM_PLUG 
+	echo "Done!"
+else
+	let $VIM_CONFIG = stdpath('config') . '/init.vim'
 
-function! s:check_back_space() abort
-	let col = col('.') - 1
-	return !col || getline('.')[col - 1]  =~ '\s'
-endfunction
+	autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+				\| PlugInstall --sync | source $VIM_CONFIG 
+	\| endif
 
-inoremap <silent><expr> <Tab>
-        \ pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<Tab>" :
-        \ coc#refresh()
+	call plug#begin(stdpath('data') . '/plugged/')
 
-map <C-o> :NERDTreeToggle<CR>
+	Plug 'junegunn/fzf.vim'
+	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	Plug 'tomasiser/vim-code-dark'
+	Plug 'vim-airline/vim-airline'
+	Plug 'scrooloose/nerdtree'
 
-colorscheme codedark 
-syntax on
+	call plug#end()
 
-let g:airline_theme = 'codedark'
+	colorscheme codedark
+	let g:airline_theme = 'codedark'
+	let g:onedark_termcolors = 256
 
-set encoding=utf-8
-set number
+	autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
+		\ quit | endif
 
+	set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+	nnoremap <silent> <C-f> :GitFiles<CR>
+
+	nmap <silent> gd <Plug>(coc-definition)
+	nmap <silent> gy :call CocActionAsync('doHover')<CR>
+	nmap <silent> gi <Plug>(coc-implementation)
+	nmap <silent> gr <Plug>(coc_references)
+
+	function! s:check_back_space() abort
+		let col = col('.') - 1
+		return !col || getline('.')[col - 1] =~ '\s'
+	endfunction
+
+	inoremap <silent><expr> <Tab>
+		\ pumvisible() ? "\<C-n>" :
+		\ <SID>check_back_space() ? "\<Tab>" :
+		\ coc#refresh()
+
+	map <C-o> :NERDTreeToggle<CR>
+endif
